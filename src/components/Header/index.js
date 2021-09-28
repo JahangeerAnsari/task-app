@@ -31,7 +31,7 @@ export const Header = (props) => {
       <Navbar bg="dark" variant="dark">
         <Container>
           <Link to="/" className="navbar-brand">
-            Authentication page
+           Admin DashBoard
           </Link>
           <Nav className="mr-right">
             <NavItem style={{color:"white"}}> hi, {user.firstName}</NavItem>

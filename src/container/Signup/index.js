@@ -42,7 +42,7 @@ export const Signup = (props) => {
       setShowAlert(true)
 
     } else {
-      localStorage.setItem("results", JSON.stringify([userData]));
+     
       setAlert({ ...alert, message: "Invalid Input", variant: "danger" });
 
       setShowAlert(true)
