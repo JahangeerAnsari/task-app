@@ -22,7 +22,7 @@ const NewModal = (props) => {
           ))
         ) : (
           <Button variant="primary" onClick={props.onSubmit}>
-            Save Change
+            {props.buttonText ? props.buttonText : "Save Change"}
           </Button>
         )}
       </Modal.Footer>

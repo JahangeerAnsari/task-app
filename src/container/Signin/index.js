@@ -5,7 +5,6 @@ import InputField from "../../components/InputField";
 import { Layout } from "../../components/Layout";
 import { useHistory } from "react-router-dom";
 
-
 /**
  * @author
  * @function Signin
@@ -17,13 +16,11 @@ export const Signin = (props) => {
   const [alert, setAlert] = useState({
     variant: "success",
     message: "",
-  })
+  });
   const [showAlert, setShowAlert] = useState(false);
   const history = useHistory();
   const onSubmitSiginForm = (e) => {
     e.preventDefault();
-
-  
 
     let isValidated = false;
     let userData = {};
@@ -35,22 +32,21 @@ export const Signin = (props) => {
     });
     if (isValidated) {
       localStorage.setItem("user", JSON.stringify({ ...userData, ...user }));
-      setAlert({ ...alert, message:"User Signin  success", variant: "success" });
-          setShowAlert(true)
+      setAlert({
+        ...alert,
+        message: "User Signin  success",
+        variant: "success",
+      });
+      setShowAlert(true);
 
       history.push("/");
     } else {
       //error wrong credentials
       setAlert({ ...alert, message: "Invalid Input", variant: "danger" });
 
-      setShowAlert(true)
-      console.log("====> wrong credentials");
+      setShowAlert(true);
     }
-      // if()
-
-  
-
-    
+    // if()
   };
 
   const handleChange = (e) => {
@@ -61,10 +57,15 @@ export const Signin = (props) => {
   return (
     <Layout>
       <Container style={{ paddingTop: "50px" }}>
-        {showAlert && <Alert variant={alert.variant} onClose={() => setShowAlert(false)} dismissible>
-      {alert.message}
-    </Alert>
-    }
+        {showAlert && (
+          <Alert
+            variant={alert.variant}
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
+            {alert.message}
+          </Alert>
+        )}
         <Row>
           <Col md={{ span: "6", offset: "3" }}>
             <Form onSubmit={onSubmitSiginForm}>

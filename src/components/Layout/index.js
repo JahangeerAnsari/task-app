@@ -7,7 +7,6 @@ import { Header } from "../Header";
  **/
 
 export const Layout = (props) => {
-  console.log("====> props. ", props);
   return (
     <React.Fragment>
       {props.header && <Header />}

@@ -19,7 +19,7 @@ export const Signup = (props) => {
   const [alert, setAlert] = useState({
     variant: "success",
     message: "",
-  })
+  });
   const [showAlert, setShowAlert] = useState(false);
 
   const onSubmitSignForm = (e) => {
@@ -32,30 +32,36 @@ export const Signup = (props) => {
       password,
       confPassword,
     };
-    
 
     const data = JSON.parse(localStorage.getItem("userData"));
     if (data && data.length !== "undefined") {
       localStorage.clear();
       localStorage.setItem("results", JSON.stringify([...data, userData]));
-      setAlert({ ...alert, message:"User Registeration  success", variant: "success" });
-      setShowAlert(true)
-
+      setAlert({
+        ...alert,
+        message: "User Registeration  success",
+        variant: "success",
+      });
+      setShowAlert(true);
     } else {
-     
       setAlert({ ...alert, message: "Invalid Input", variant: "danger" });
 
-      setShowAlert(true)
+      setShowAlert(true);
     }
   };
 
   return (
     <Layout>
       <Container style={{ paddingTop: "50px" }}>
-        {showAlert && <Alert variant={alert.variant} onClose={() => setShowAlert(false)} dismissible>
-      {alert.message}
-    </Alert>
-    }
+        {showAlert && (
+          <Alert
+            variant={alert.variant}
+            onClose={() => setShowAlert(false)}
+            dismissible
+          >
+            {alert.message}
+          </Alert>
+        )}
         <Row>
           <Col md={{ span: "6", offset: "3" }}>
             <Form onSubmit={onSubmitSignForm}>

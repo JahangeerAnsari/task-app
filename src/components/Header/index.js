@@ -19,8 +19,6 @@ export const Header = (props) => {
 
   const user = JSON.parse(userData);
 
-  console.log("USEEEERTY", user);
-
   const logout = () => {
     localStorage.removeItem("user");
     return history.push("/signin");
@@ -31,10 +29,10 @@ export const Header = (props) => {
       <Navbar bg="dark" variant="dark">
         <Container>
           <Link to="/" className="navbar-brand">
-           Admin DashBoard
+            Admin DashBoard
           </Link>
           <Nav className="mr-right">
-            <NavItem style={{color:"white"}}> hi, {user.firstName}</NavItem>
+            <NavItem style={{ color: "white" }}> hi, {user.firstName}</NavItem>
             <NavItem>
               <Button onClick={logout}>Logout</Button>
             </NavItem>

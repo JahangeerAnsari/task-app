@@ -5,6 +5,7 @@ import "./style.css";
 import { Alert, Col, Row, Table } from "react-bootstrap";
 import NewModal from "../../components/Modal";
 import InputField from "../../components/InputField";
+import Button from "@restart/ui/esm/Button";
 /**
  * @author
  * @function Home
@@ -14,10 +15,11 @@ const Home = (props) => {
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState({});
   const [show, setShow] = useState(false);
+  const [action, setAction] = useState("");
   const [alert, setAlert] = useState({
     variant: "success",
     message: "",
-  })
+  });
   const [showAlert, setShowAlert] = useState(false);
 
   const getAllUser = async () => {
@@ -28,7 +30,12 @@ const Home = (props) => {
         setUsers(data.data || []);
       }
     } catch (e) {
-      console.log("====> error while fetching users list data", e);
+      setAlert({
+        ...alert,
+        message: "Failed to fetch the users list",
+        variant: "danger",
+      });
+      setShowAlert(true);
     }
   };
 
@@ -37,7 +44,12 @@ const Home = (props) => {
   }, []);
 
   const showModal = (_user) => {
-    setUser(_user);
+    if (_user) {
+      setAction("updateUser");
+      setUser(_user);
+    } else {
+      setAction("addUser");
+    }
     setShow(true);
   };
 
@@ -45,20 +57,21 @@ const Home = (props) => {
   const closeModal = () => {
     setShow(false);
   };
-  console.log("==> user : ", user);
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setUser({ ...user, [id]: value });
   };
 
-  const renderUserDetails = () => {
+  const renderModal = () => {
     return (
       <NewModal
         show={show}
         handleClose={closeModal}
         modalTitle={`USER DETAILS`}
         size="lg"
-        onSubmit={updateUser}
+        buttonText={action === "addUser" ? "Add user" : "Save changes"}
+        onSubmit={action === "addUser" ? addUser : updateUser}
       >
         <Row>
           <Col md="6">
@@ -97,19 +110,20 @@ const Home = (props) => {
 
   const updateUser = async (e) => {
     e.preventDefault();
-    console.log("=----> updating user : ", user);
     try {
       if (user.id) {
         const response = await api.patch(`/users/${user.id}`, user);
-        console.log("====> update resp : ", response);
-        if(response.status === 200){
-          setAlert({ ...alert, message:"update has been success", variant: "success" });
-          setShowAlert(true)
+        if (response.status === 200) {
+          setAlert({
+            ...alert,
+            message: "update has been success",
+            variant: "success",
+          });
+          setShowAlert(true);
         }
 
         closeModal();
         const updatedUser = response.data;
-        console.log("=-====> updatedUser ; ", updatedUser);
         if (updatedUser) {
           const newUsers = users.map((u) => {
             if (u.email === updatedUser.email) {
@@ -121,23 +135,70 @@ const Home = (props) => {
         }
       }
     } catch (error) {
-      console.log("===> error udpate User : ", e);
       if (error.status === 400) {
+        setAlert({
+          ...alert,
+          message: "Sonething went wrong",
+          variant: "danger",
+        });
 
-        setAlert({ ...alert, message: "Sonething went wrong", variant: "danger" });
-
-        setShowAlert(true)
+        setShowAlert(true);
       }
     }
   };
 
-  // const handleDeleteUser = () => {};
+  // update user has been completed
+
+  // add user
+
+  const addUser = async (e) => {
+    e.preventDefault();
+    try {
+      if (user) {
+        const response = await api.patch(`/users/`, user);
+        const savedUser = response.data;
+        if (savedUser) {
+          const otherUsers = users.filter((u) => u.email !== savedUser.email);
+          setUsers([
+            ...otherUsers,
+            { ...savedUser, id: otherUsers.length + 1 },
+          ]);
+          setUser({});
+          closeModal();
+          setAlert({
+            ...alert,
+            message: "User added successfully!",
+            variant: "success",
+          });
+          setShowAlert(true);
+        }
+      }
+    } catch (error) {
+      setAlert({
+        ...alert,
+        message: "User was not added due to \n" + error,
+        variant: "danger",
+      });
+      setShowAlert(true);
+    }
+  };
+
   return (
     <Layout header>
-       {showAlert && <Alert variant={alert.variant} onClose={() => setShowAlert(false)} dismissible>
+      {showAlert && (
+        <Alert
+          variant={alert.variant}
+          onClose={() => setShowAlert(false)}
+          dismissible
+        >
           {alert.message}
         </Alert>
-        }
+      )}
+      <Row>
+        <Col>
+          <Button onClick={() => showModal()}>Add user</Button>
+        </Col>
+      </Row>
       <Table
         striped
         bordered
@@ -154,6 +215,7 @@ const Home = (props) => {
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
           {users.map((user, index) => (
             <tr key={index}>
@@ -163,13 +225,12 @@ const Home = (props) => {
               <td>{user.email}</td>
               <td>{user.avatar}</td>
               <td onClick={() => showModal(user)}>Update</td>
-             
             </tr>
           ))}
         </tbody>
       </Table>
 
-      {renderUserDetails()}
+      {renderModal()}
     </Layout>
   );
 };
